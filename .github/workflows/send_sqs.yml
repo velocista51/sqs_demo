@@ -1,5 +1,6 @@
 name: Send message to SQS
 
+# Trigger on push to main or manual workflow dispatch
 on:
   push:
     branches:
@@ -11,17 +12,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout the repo
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2️⃣ Setup Python
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: pip install boto3
 
+      # 4️⃣ Configure AWS credentials from secrets
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -29,5 +34,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
+      # 5️⃣ Optional debug: print AWS identity
+      - name: Debug AWS Identity
+        run: aws sts get-caller-identity
+
+      # 6️⃣ Run Python script to send SQS message
       - name: Send message to SQS
+        env:
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: python producer.py
