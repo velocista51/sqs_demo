@@ -1,10 +1,13 @@
 import boto3
 import json
 import uuid
+import os
 
-REGION = "us-west-2"
+# Get region from environment variable
+REGION = os.environ.get("AWS_DEFAULT_REGION", "us-west-2")
 QUEUE_URL = "https://sqs.us-west-2.amazonaws.com/202325946758/demo-queue"
 
+# boto3 will automatically use AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from environment
 sqs = boto3.client("sqs", region_name=REGION)
 
 
